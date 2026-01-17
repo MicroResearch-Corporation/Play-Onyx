@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraPlay OS v4.0 | Onyx</title>
+    <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --bg-main: #0a0a0a;
+            --bg-glass: rgba(20, 20, 20, 0.7);
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-hover: rgba(255, 255, 255, 0.08);
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.3);
+            --text-main: #fff;
+            --text-dim: #888;
+            --border: 1px solid rgba(255, 255, 255, 0.1);
+            --radius: 12px;
+            --font: 'Segoe UI', system-ui, sans-serif;
+            --trans: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- GLOBAL RESET --- */
+        * { box-sizing: border-box; outline: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; background: var(--bg-main); color: var(--text-main); font-family: var(--font); 
+            height: 100vh; overflow: hidden; display: grid; 
+            grid-template-columns: 240px 1fr; grid-template-rows: 1fr 80px;
+        }
+
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            grid-row: 1 / -1; background: var(--bg-glass); border-right: var(--border);
+            backdrop-filter: blur(20px); display: flex; flex-direction: column; padding: 20px;
+            z-index: 50;
+        }
+        .brand { font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        
+        .nav-btn {
+            padding: 12px; margin-bottom: 5px; border-radius: var(--radius); cursor: pointer;
+            color: var(--text-dim); transition: var(--trans); display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: var(--bg-hover); color: var(--text-main); }
+        .nav-btn.active { background: rgba(0, 242, 255, 0.1); color: var(--accent); border-left: 2px solid var(--accent); }
+        .nav-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        .drop-zone { border: 2px dashed var(--accent); background: rgba(0, 242, 255, 0.1); }
+
+        /* --- MAIN STAGE --- */
+        .stage {
+            position: relative; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        video { width: 100%; height: 100%; object-fit: contain; z-index: 10; }
+        .visualizer { position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; z-index: 11; pointer-events: none; mix-blend-mode: screen; opacity: 0.8; }
+        .album-art-placeholder { position: absolute; width: 300px; height: 300px; background-size: cover; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 9; display: none; }
+
+        /* --- LIBRARY VIEW --- */
+        .library-view {
+            position: absolute; inset: 0; background: var(--bg-main); z-index: 20; padding: 20px;
+            display: none; flex-direction: column;
+        }
+        .library-view.active { display: flex; }
+        
+        .lib-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .lib-tabs { display: flex; gap: 10px; background: #1a1a1a; padding: 5px; border-radius: 8px; }
+        .lib-tab { padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; color: #888; transition: 0.2s; }
+        .lib-tab.active { background: #333; color: #fff; }
+        
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; overflow-y: auto; padding-bottom: 100px; }
+        .media-card {
+            background: var(--bg-card); border-radius: var(--radius); overflow: hidden;
+            border: var(--border); transition: var(--trans); position: relative; cursor: pointer;
+        }
+        .media-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card-thumb { height: 90px; background: #111; background-size: cover; background-position: center; position: relative; }
+        .card-info { padding: 10px; }
+        .card-title { font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .card-meta { font-size: 0.7rem; color: var(--text-dim); display: flex; justify-content: space-between; margin-top: 4px; }
+        .type-badge { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; text-transform: uppercase; }
+
+        /* --- PLAYER BAR --- */
+        .control-bar {
+            grid-column: 2; background: var(--bg-glass); backdrop-filter: blur(20px);
+            border-top: var(--border); display: flex; align-items: center; padding: 0 25px;
+            justify-content: space-between; position: relative; z-index: 100;
+        }
+        .seek-container { position: absolute; top: -8px; left: 0; width: 100%; height: 16px; cursor: pointer; z-index: 101; }
+        .seek-bg { position: absolute; top: 7px; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transition: 0.2s; }
+        .seek-fill { height: 100%; background: var(--accent); width: 0%; box-shadow: 0 0 10px var(--accent); position: relative; }
+        .seek-container:hover .seek-bg { height: 4px; top: 6px; }
+
+        .btn-ctrl { background: none; border: none; color: #fff; cursor: pointer; padding: 10px; border-radius: 50%; transition: 0.2s; display: flex; justify-content: center; align-items: center;}
+        .btn-ctrl:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
+        .btn-ctrl.active { color: var(--accent); }
+        .btn-play { background: #fff; color: #000; width: 45px; height: 45px; transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .btn-play:hover { transform: scale(1.1); background: var(--accent); box-shadow: 0 0 25px var(--accent-glow); }
+
+        .meta-display { display: flex; flex-direction: column; width: 200px; }
+        .meta-title { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .meta-time { font-size: 0.75rem; color: var(--text-dim); font-family: monospace; margin-top: 2px; }
+
+        /* --- POPUPS / MODALS --- */
+        .popup-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 200; display: none; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
+        }
+        .popup-overlay.open { display: flex; opacity: 1; }
+        .popup {
+            background: #141414; border: var(--border); width: 400px; max-width: 90%; max-height: 80vh;
+            border-radius: 16px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.9); transition: 0.3s; display: flex; flex-direction: column;
+        }
+        .popup-overlay.open .popup { transform: scale(1); }
+        .popup-head { font-size: 1rem; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        
+        /* Queue List */
+        .queue-list { overflow-y: auto; flex: 1; min-height: 200px; }
+        .q-item { 
+            padding: 10px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 10px; 
+            font-size: 0.85rem; cursor: grab; transition: 0.2s; 
+        }
+        .q-item:hover { background: #1f1f1f; }
+        .q-item.active { background: rgba(0, 242, 255, 0.05); border-left: 3px solid var(--accent); }
+        .q-item.dragging { opacity: 0.5; background: #000; }
+
+        /* EQ Sliders */
+        .eq-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .eq-row label { width: 50px; font-size: 0.8rem; color: #888; }
+        input[type=range] { flex: 1; height: 4px; background: #333; border-radius: 2px; -webkit-appearance: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #fff; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        input[type=range]:hover::-webkit-slider-thumb { background: var(--accent); transform: scale(1.2); }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: #222; border: 1px solid #444; color: #fff; padding: 10px 25px;
+            border-radius: 50px; font-size: 0.9rem; pointer-events: none; opacity: 0; transition: 0.3s; z-index: 1000;
+        }
+
+        /* --- UTILITY --- */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            ULTRA OS <span style="font-size:0.7em; color:#fff; margin-left:5px; opacity:0.5;">v4.0</span>
+        </div>
+
+        <div class="nav-btn active" onclick="ui.view('library')">
+            <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+            Library
+        </div>
+        <div class="nav-btn" onclick="ui.view('player')">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            Now Playing
+        </div>
+
+        <div style="flex:1"></div>
+
+        <div style="font-size:0.75rem; color:#666; font-weight:700; margin-bottom:10px;">SETTINGS</div>
+        <div class="nav-btn" onclick="ui.modal('settings-modal')">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.04.17 0 .36.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.04-.17 0-.36-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            Preferences
+        </div>
+        <input type="file" id="file-input" multiple style="display:none" accept="audio/*,video/*">
+        <div class="nav-btn" onclick="document.getElementById('file-input').click()" style="color:var(--accent)">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Import Media
+        </div>
+    </aside>
+
+    <!-- STAGE -->
+    <main class="stage">
+        <video id="video-el" playsinline crossorigin="anonymous"></video>
+        <div class="album-art-placeholder" id="album-art"></div>
+        <canvas id="visualizer" class="visualizer"></canvas>
+
+        <!-- Library Overlay -->
+        <div id="library-view" class="library-view active">
+            <div class="lib-header">
+                <h2 style="margin:0">Media Library</h2>
+                <div class="lib-tabs">
+                    <div class="lib-tab active" onclick="ui.filterLib('all')">All</div>
+                    <div class="lib-tab" onclick="ui.filterLib('audio')">Audio</div>
+                    <div class="lib-tab" onclick="ui.filterLib('video')">Video</div>
+                </div>
+            </div>
+            <div class="media-grid" id="media-grid"></div>
+        </div>
+    </main>
+
+    <!-- CONTROLS -->
+    <div class="control-bar">
+        <div class="seek-container" id="seek-wrap">
+            <div class="seek-bg"><div class="seek-fill" id="seek-fill"></div></div>
+        </div>
+
+        <div class="meta-display">
+            <div class="meta-title" id="track-title">No Media</div>
+            <div class="meta-time" id="track-time">--:-- / --:--</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:15px;">
+            <button class="btn-ctrl" id="btn-shuffle" onclick="player.toggleShuffle()"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
+            <button class="btn-ctrl" onclick="player.prev()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+            <button class="btn-ctrl btn-play" id="btn-play" onclick="player.toggle()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+            <button class="btn-ctrl" onclick="player.next()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+            <button class="btn-ctrl" id="btn-loop" onclick="player.toggleLoop()"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg></button>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+            <button class="btn-ctrl" onclick="ui.modal('info-modal')" title="Info"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/></svg></button>
+            <button class="btn-ctrl" onclick="ui.modal('eq-modal')" title="Audio EQ"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg></button>
+            <button class="btn-ctrl" onclick="ui.modal('queue-modal')" title="Queue"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></button>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- MODALS -->
+    <!-- 1. Queue Modal -->
+    <div class="popup-overlay" id="queue-modal" onclick="if(event.target===this) this.classList.remove('open')">
+        <div class="popup">
+            <div class="popup-head">
+                <span>Play Queue</span>
+                <span style="font-size:0.8em; color:var(--accent); cursor:pointer;" onclick="queue.clear()">Clear</span>
+            </div>
+            <div class="queue-list" id="queue-list"></div>
+        </div>
+    </div>
+
+    <!-- 2. EQ Modal -->
+    <div class="popup-overlay" id="eq-modal" onclick="if(event.target===this) this.classList.remove('open')">
+        <div class="popup">
+            <div class="popup-head">Audio Equalizer</div>
+            <div class="eq-row"><label>Low</label> <input type="range" min="-10" max="10" value="0" oninput="audio.setEq('low',this.value)"></div>
+            <div class="eq-row"><label>Mid</label> <input type="range" min="-10" max="10" value="0" oninput="audio.setEq('mid',this.value)"></div>
+            <div class="eq-row"><label>High</label> <input type="range" min="-10" max="10" value="0" oninput="audio.setEq('high',this.value)"></div>
+            <div class="eq-row"><label>Vol</label> <input type="range" min="0" max="1" step="0.05" value="1" id="vol-slider" oninput="player.vol(this.value)"></div>
+        </div>
+    </div>
+
+    <!-- 3. Settings Modal -->
+    <div class="popup-overlay" id="settings-modal" onclick="if(event.target===this) this.classList.remove('open')">
+        <div class="popup">
+            <div class="popup-head">Settings Management</div>
+            <p style="color:#888; font-size:0.8rem; margin-top:0;">Manage application preferences. Media files are stored separately in browser database.</p>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="nav-btn" style="flex:1; justify-content:center; background:#222;" onclick="app.exportSettings()">Export Settings (JSON)</button>
+                <button class="nav-btn" style="flex:1; justify-content:center; background:#222;" onclick="$('#import-set').click()">Import Settings</button>
+            </div>
+            <input type="file" id="import-set" style="display:none" accept=".json">
+            <div style="margin-top:20px; border-top:1px solid #333; padding-top:10px;">
+                <div class="nav-btn" style="color:#ff4757" onclick="app.db.clear()">⚠️ Clear Media Database</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Info Modal -->
+    <div class="popup-overlay" id="info-modal" onclick="if(event.target===this) this.classList.remove('open')">
+        <div class="popup">
+            <div class="popup-head">File Metadata</div>
+            <div id="meta-content" style="font-family:monospace; font-size:0.85rem; line-height:1.6; color:#bbb;"></div>
+        </div>
+    </div>
+
+<script>
+/* --- UTILS --- */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const uuid = () => Math.random().toString(36).substr(2, 9);
+const fmtTime = s => {
+    if(!s || isNaN(s)) return "00:00";
+    let m = Math.floor(s/60), sec = Math.floor(s%60);
+    return `${m}:${sec<10?'0':''}${sec}`;
+};
+
+/* --- DATA LAYER (IndexedDB for Content, LocalStorage for Settings) --- */
+class DB {
+    constructor() { 
+        this.db = null; 
+        this.ready = new Promise(r => {
+            const req = indexedDB.open('UltraPlayDB_v4', 1);
+            req.onupgradeneeded = e => {
+                const db = e.target.result;
+                if(!db.objectStoreNames.contains('media')) db.createObjectStore('media', { keyPath: 'id' });
+            };
+            req.onsuccess = e => { this.db = e.target.result; r(); };
+        });
+    }
+    async add(file) {
+        await this.ready;
+        const item = { id: uuid(), name: file.name, type: file.type, blob: file, size: file.size, added: Date.now() };
+        return new Promise(r => {
+            const tx = this.db.transaction('media', 'readwrite');
+            tx.objectStore('media').add(item);
+            tx.oncomplete = () => r(item);
+        });
+    }
+    async getAll() { await this.ready; return new Promise(r => this.db.transaction('media').objectStore('media').getAll().onsuccess = e => r(e.target.result)); }
+    async get(id) { await this.ready; return new Promise(r => this.db.transaction('media').objectStore('media').get(id).onsuccess = e => r(e.target.result)); }
+    async del(id) { await this.ready; this.db.transaction('media', 'readwrite').objectStore('media').delete(id); }
+    async clear() { await this.ready; this.db.transaction('media', 'readwrite').objectStore('media').clear(); location.reload(); }
+}
+
+/* --- STATE MANAGER --- */
+const app = {
+    db: new DB(),
+    items: [],
+    
+    // Default Settings
+    state: {
+        vol: 1,
+        loop: false,
+        shuffle: false,
+        lastId: null,
+        lastTime: 0,
+        eq: [0,0,0], // low, mid, high
+        queueIds: []
+    },
+
+    init: async () => {
+        // Load Settings
+        const saved = localStorage.getItem('ultra_settings');
+        if(saved) app.state = { ...app.state, ...JSON.parse(saved) };
+
+        // Load Content
+        await app.loadLibrary();
+        
+        // Setup Import
+        $('#file-input').onchange = async e => {
+            ui.toast(`Importing ${e.target.files.length} files...`);
+            for(let f of e.target.files) await app.db.add(f);
+            await app.loadLibrary();
+        };
+
+        $('#import-set').onchange = e => {
+            const r = new FileReader();
+            r.onload = () => {
+                localStorage.setItem('ultra_settings', r.result);
+                location.reload();
+            };
+            r.readAsText(e.target.files[0]);
+        };
+
+        // UI Restore
+        player.init();
+        app.restoreSession();
+
+        // Drag Drop
+        document.body.ondragover = e => { e.preventDefault(); $('.sidebar').classList.add('drop-zone'); };
+        document.body.ondragleave = () => $('.sidebar').classList.remove('drop-zone');
+        document.body.ondrop = async e => {
+            e.preventDefault(); $('.sidebar').classList.remove('drop-zone');
+            const files = [...e.dataTransfer.files].filter(f => f.type.match(/video|audio/));
+            if(files.length) {
+                ui.toast('Processing files...');
+                for(let f of files) await app.db.add(f);
+                await app.loadLibrary();
+            }
+        };
+
+        // Auto-save State Loop
+        setInterval(app.saveState, 2000);
+    },
+
+    loadLibrary: async () => {
+        app.items = await app.db.getAll();
+        ui.renderLib(app.items);
+    },
+
+    saveState: () => {
+        // Save current time if playing
+        if(!player.vid.paused) app.state.lastTime = player.vid.currentTime;
+        app.state.queueIds = queue.list.map(i => i.id);
+        localStorage.setItem('ultra_settings', JSON.stringify(app.state));
+    },
+
+    restoreSession: async () => {
+        // Restore controls
+        player.vol(app.state.vol);
+        $('#vol-slider').value = app.state.vol;
+        if(app.state.loop) player.toggleLoop();
+        if(app.state.shuffle) player.toggleShuffle();
+        audio.init(player.vid); // Pre-init context
+        audio.setEq('low', app.state.eq[0]);
+        audio.setEq('mid', app.state.eq[1]);
+        audio.setEq('high', app.state.eq[2]);
+        $$('#eq-modal input')[0].value = app.state.eq[0];
+        $$('#eq-modal input')[1].value = app.state.eq[1];
+        $$('#eq-modal input')[2].value = app.state.eq[2];
+
+        // Restore Queue
+        if(app.state.queueIds.length) {
+            queue.list = app.state.queueIds.map(id => app.items.find(x => x.id === id)).filter(Boolean);
+            queue.render();
+        }
+
+        // Restore Playing Media (URL Hash priority, then LocalStorage)
+        const hashId = location.hash.substring(1);
+        const targetId = hashId || app.state.lastId;
+
+        if(targetId) {
+            const item = app.items.find(i => i.id === targetId);
+            if(item) {
+                // If checking via URL, play immediately. If restoring session, pause at timestamp.
+                const autoPlay = !!hashId; 
+                await player.load(item, autoPlay, app.state.lastTime);
+                if(!autoPlay) ui.toast('Session Restored');
+            }
+        }
+    },
+
+    exportSettings: () => {
+        const b = new Blob([JSON.stringify(app.state)], {type:'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'ultra_settings.json'; a.click();
+    }
+};
+
+/* --- AUDIO ENGINE --- */
+const audio = {
+    ctx: null, src: null, bands: {},
+    init: (elem) => {
+        if(!audio.ctx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            audio.ctx = new Ctx();
+            audio.src = audio.ctx.createMediaElementSource(elem);
+            audio.bands.low = audio.ctx.createBiquadFilter(); audio.bands.low.type='lowshelf'; audio.bands.low.frequency.value=320;
+            audio.bands.mid = audio.ctx.createBiquadFilter(); audio.bands.mid.type='peaking'; audio.bands.mid.frequency.value=1000;
+            audio.bands.high = audio.ctx.createBiquadFilter(); audio.bands.high.type='highshelf'; audio.bands.high.frequency.value=3200;
+            audio.analyser = audio.ctx.createAnalyser(); audio.analyser.fftSize = 128;
+            
+            audio.src.connect(audio.bands.low).connect(audio.bands.mid).connect(audio.bands.high)
+                     .connect(audio.analyser).connect(audio.ctx.destination);
+            
+            audio.loopVis();
+        }
+        if(audio.ctx.state === 'suspended') audio.ctx.resume();
+    },
+    setEq: (b, v) => {
+        if(audio.bands[b]) audio.bands[b].gain.value = v;
+        const map = {low:0, mid:1, high:2};
+        app.state.eq[map[b]] = parseFloat(v);
+    },
+    loopVis: () => {
+        requestAnimationFrame(audio.loopVis);
+        // Optimization: Only draw if playing audio
+        if(player.vid.paused || player.currentItem?.type.startsWith('video')) {
+            // clear canvas if video
+            const cvs = $('#visualizer');
+            cvs.getContext('2d').clearRect(0,0,cvs.width, cvs.height);
+            return;
+        }
+
+        const cvs = $('#visualizer'), ctx = cvs.getContext('2d');
+        const buffer = new Uint8Array(audio.analyser.frequencyBinCount);
+        audio.analyser.getByteFrequencyData(buffer);
+        
+        cvs.width = cvs.clientWidth; cvs.height = cvs.clientHeight;
+        ctx.clearRect(0,0,cvs.width, cvs.height);
+        
+        const barW = (cvs.width / buffer.length) * 2.5;
+        let x = 0;
+        
+        buffer.forEach(v => {
+            const barH = (v/255) * cvs.height * 0.8;
+            ctx.fillStyle = `rgba(0, 242, 255, ${v/350 + 0.1})`;
+            ctx.fillRect(x, cvs.height - barH, barW, barH);
+            x += barW + 2;
+        });
+    }
+};
+
+/* --- PLAYER CORE --- */
+const player = {
+    vid: $('#video-el'),
+    currentItem: null,
+    
+    init: () => {
+        player.vid.onended = () => app.state.loop ? player.vid.play() : player.next();
+        player.vid.ontimeupdate = () => {
+            const p = (player.vid.currentTime / player.vid.duration) * 100;
+            $('#seek-fill').style.width = `${p}%`;
+            $('#track-time').innerText = `${fmtTime(player.vid.currentTime)} / ${fmtTime(player.vid.duration)}`;
+        };
+        $('#seek-wrap').onclick = e => {
+            const r = $('#seek-wrap').getBoundingClientRect();
+            player.vid.currentTime = ((e.clientX - r.left)/r.width) * player.vid.duration;
+        };
+        
+        // Keybinds
+        window.onkeydown = e => {
+            if(e.target.tagName === 'INPUT') return;
+            if(e.code === 'Space') { e.preventDefault(); player.toggle(); }
+            if(e.code === 'ArrowRight') player.vid.currentTime += 5;
+            if(e.code === 'ArrowLeft') player.vid.currentTime -= 5;
+        };
+    },
+
+    load: async (item, autoPlay = true, startTime = 0) => {
+        if(player.src) URL.revokeObjectURL(player.src);
+        player.currentItem = item;
+        app.state.lastId = item.id;
+        
+        // Sync URL Hash
+        history.replaceState(null, null, `#${item.id}`);
+
+        player.src = URL.createObjectURL(item.blob);
+        player.vid.src = player.src;
+        player.vid.currentTime = startTime;
+
+        audio.init(player.vid);
+
+        // UI Update
+        $('#track-title').innerText = item.name;
+        
+        // Video vs Audio UI
+        if(item.type.startsWith('audio')) {
+            $('#video-el').style.opacity = 0;
+            $('#album-art').style.display = 'block';
+            $('#album-art').style.backgroundImage = `linear-gradient(45deg, #111, #222), url('')`; // Placeholder
+            $('#visualizer').style.opacity = 1;
+        } else {
+            $('#video-el').style.opacity = 1;
+            $('#album-art').style.display = 'none';
+            $('#visualizer').style.opacity = 0; // Hide vis for video
+        }
+        
+        // Metadata extraction
+        player.vid.onloadedmetadata = () => {
+            $('#meta-content').innerHTML = `
+                Filename: ${item.name}<br>
+                Type: ${item.type}<br>
+                Size: ${(item.size / (1024*1024)).toFixed(2)} MB<br>
+                Duration: ${player.vid.duration.toFixed(2)}s<br>
+                Res: ${player.vid.videoWidth}x${player.vid.videoHeight}<br>
+            `;
+            if(startTime > 0) player.vid.currentTime = startTime; // Ensure seek
+            if(autoPlay) player.toggle(true);
+        };
+        
+        ui.view('player');
+        queue.updateHighlight();
+    },
+
+    toggle: (forceState) => {
+        const isPlay = typeof forceState === 'boolean' ? forceState : player.vid.paused;
+        if(isPlay) {
+            player.vid.play().catch(e=>console.log(e));
+            $('#btn-play').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        } else {
+            player.vid.pause();
+            $('#btn-play').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+        }
+    },
+
+    vol: (v) => { 
+        player.vid.volume = v; 
+        app.state.vol = v; 
+    },
+    
+    toggleShuffle: () => { 
+        app.state.shuffle = !app.state.shuffle; 
+        $('#btn-shuffle').style.color = app.state.shuffle ? 'var(--accent)' : '#fff';
+        ui.toast(app.state.shuffle ? 'Shuffle On' : 'Shuffle Off');
+    },
+    
+    toggleLoop: () => { 
+        app.state.loop = !app.state.loop; 
+        $('#btn-loop').style.color = app.state.loop ? 'var(--accent)' : '#fff';
+        ui.toast(app.state.loop ? 'Loop On' : 'Loop Off');
+    },
+
+    next: () => {
+        if(!queue.list.length) return;
+        let idx = queue.list.findIndex(x => x.id === player.currentItem?.id);
+        if(app.state.shuffle) {
+            idx = Math.floor(Math.random() * queue.list.length);
+        } else {
+            idx = (idx + 1) % queue.list.length;
+        }
+        player.load(queue.list[idx]);
+    },
+    
+    prev: () => {
+        if(!queue.list.length) return;
+        let idx = queue.list.findIndex(x => x.id === player.currentItem?.id);
+        if(idx > 0) idx--;
+        player.load(queue.list[idx]);
+    }
+};
+
+/* --- QUEUE MANAGER --- */
+const queue = {
+    list: [],
+    add: (item) => {
+        if(!queue.list.find(x => x.id === item.id)) {
+            queue.list.push(item);
+            queue.render();
+            ui.toast('Added to Queue');
+        }
+    },
+    clear: () => { queue.list = []; queue.render(); ui.toast('Queue Cleared'); },
+    render: () => {
+        const el = $('#queue-list'); el.innerHTML = '';
+        queue.list.forEach((item, i) => {
+            const d = document.createElement('div');
+            d.className = 'q-item';
+            d.draggable = true;
+            if(player.currentItem?.id === item.id) d.classList.add('active');
+            
+            d.innerHTML = `
+                <span style="color:#666; font-size:0.7em">${i+1}</span>
+                <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${item.name}</span>
+                <span style="cursor:pointer; color:#666" onclick="event.stopPropagation(); queue.remove(${i})">✕</span>
+            `;
+            d.onclick = () => player.load(item);
+            
+            // Drag Logic
+            d.ondragstart = e => { e.dataTransfer.setData('idx', i); d.classList.add('dragging'); };
+            d.ondragend = () => d.classList.remove('dragging');
+            d.ondragover = e => e.preventDefault();
+            d.ondrop = e => {
+                e.preventDefault();
+                const from = parseInt(e.dataTransfer.getData('idx'));
+                const moved = queue.list.splice(from, 1)[0];
+                queue.list.splice(i, 0, moved);
+                queue.render();
+            };
+            el.appendChild(d);
+        });
+    },
+    remove: (i) => { queue.list.splice(i, 1); queue.render(); },
+    updateHighlight: () => queue.render() // Simple re-render to update active class
+};
+
+/* --- UI CONTROLLER --- */
+const ui = {
+    view: (v) => {
+        if(v === 'library') $('#library-view').classList.add('active');
+        else $('#library-view').classList.remove('active');
+        
+        $$('.nav-btn').forEach(b => b.classList.remove('active'));
+        if(v === 'library') $$('.nav-btn')[0].classList.add('active');
+        else $$('.nav-btn')[1].classList.add('active');
+    },
+
+    modal: (id) => {
+        const m = $(`#${id}`);
+        if(m.classList.contains('open')) m.classList.remove('open');
+        else {
+            $$('.popup-overlay').forEach(p => p.classList.remove('open'));
+            m.classList.add('open');
+        }
+    },
+
+    renderLib: (items) => {
+        const grid = $('#media-grid'); grid.innerHTML = '';
+        items.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'media-card';
+            el.innerHTML = `
+                <div class="card-thumb">
+                    <span class="type-badge">${item.type.split('/')[0]}</span>
+                    ${item.type.includes('audio') ? '<div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;opacity:0.2;font-size:2rem">🎵</div>' : ''}
+                </div>
+                <div class="card-info">
+                    <div class="card-title">${item.name}</div>
+                    <div class="card-meta">
+                        <span>${(item.size/1e6).toFixed(1)}MB</span>
+                    </div>
+                </div>
+            `;
+            el.onclick = () => { queue.add(item); player.load(item); };
+            el.oncontextmenu = e => { e.preventDefault(); queue.add(item); };
+            grid.appendChild(el);
+        });
+    },
+
+    filterLib: (type) => {
+        $$('.lib-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        if(type === 'all') ui.renderLib(app.items);
+        else ui.renderLib(app.items.filter(i => i.type.startsWith(type)));
+    },
+
+    toast: (msg) => {
+        const t = $('#toast'); t.innerText = msg; t.style.opacity = 1; t.style.bottom = '120px';
+        setTimeout(() => { t.style.opacity = 0; t.style.bottom = '100px'; }, 2000);
+    }
+};
+
+// Start
+app.init();
+</script>
+</body>
+</html>

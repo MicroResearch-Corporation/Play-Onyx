@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UltraPlay OS</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div id="app">
+    <!-- AppBar -->
+    <header class="app-bar">
+      <h1>UltraPlay OS</h1>
+      <input type="text" id="search" placeholder="Search / Ctrl+K">
+      <button id="add-file-btn">Add File</button>
+      <button id="add-url-btn">Add URL</button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main">
+      <aside class="left-panel">
+        <h2>Playlists</h2>
+        <ul id="playlist-list"></ul>
+        <button id="create-playlist-btn">+ New Playlist</button>
+      </aside>
+
+      <section class="player-section">
+        <video id="video-player" controls></video>
+        <div class="player-controls">
+          <button id="play-pause">Play</button>
+          <input type="range" id="seek-bar" min="0" max="100" value="0">
+          <input type="range" id="volume-bar" min="0" max="1" step="0.01" value="1">
+          <select id="playback-rate">
+            <option value="0.25">0.25x</option>
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+          </select>
+        </div>
+      </section>
+
+      <aside class="right-panel">
+        <h2>Queue</h2>
+        <ul id="queue-list"></ul>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="core.js"></script>
+</body>
+</html>
