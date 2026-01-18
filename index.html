@@ -2,14 +2,50 @@
 <html lang="en">
 
 <head>
+    <!-- html matetags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play Onyx</title>
+    <!-- Seo -->
+    <meta name="title" content="Play Onyx" />
+    <meta name="description" content="A Web Media Player Which You need for your daily tasks" />
+    <meta name="copyright" content="MicroResearch Corporation" />
+    <meta name="keywords" content="Plaer. web player, spotifyalternativ, yt play, playit" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://microresearch-corporation.github.io/Play-Onyx/" />
+    <meta property="og:title" content="Play Onyx" />
+    <meta property="og:description" content="A Web Media Player Which You need for your daily tasks" />
+    <meta property="og:image"
+        content="http://res.cloudinary.com/dpu5ywrox/image/upload/v1768760068/tavazlv3d1rlywnmpy3o.png" />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://microresearch-corporation.github.io/Play-Onyx/" />
+    <meta property="twitter:title" content="Play Onyx" />
+    <meta property="twitter:description" content="A Web Media Player Which You need for your daily tasks" />
+    <meta property="twitter:image"
+        content="http://res.cloudinary.com/dpu5ywrox/image/upload/v1768760068/tavazlv3d1rlywnmpy3o.png" />
+
+    <!-- PWA Content -->
+    <link href="./manifest.json" rel="manifest" />
+    <link href=" ./src/logo.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href=" ./src/logo.png" rel="android-chrome-192x192" sizes="192x192" />
+    <link href=" ./src/logo.png" rel="android-chrome-512x512" sizes="512x512" />
+    <link href=" ./src/logo.png" rel="icon" sizes="32x32" />
+    <link href=" ./src/logo.png" rel="icon" sizes="16x16" />
+    <link href=" ./src/logo.png" rel="icon" />
+    <script>
+        navigator.serviceWorker.register('sw.js', {
+            type: 'module'
+        })
+            .then(reg => console.log('Service Worker Registered'))
+            .catch(err => console.log('Registration failed', err));
+    </script>
+
+    <!-- StyleSheets and Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/6.css">
+    <link rel="stylesheet" href="./src/style.css">
 
+    <title>Play Onyx</title>
 </head>
 
 <body data-theme="dark">
@@ -277,7 +313,7 @@
     <input type="file" id="import-json" accept=".json" style="display:none" onchange="settings.import(this)">
     <input type="file" id="sub-in" accept=".vtt,.srt" style="display:none" onchange="player.loadSub(this)">
 
-    <script src="./src/6.js"></script>
+    <script src="./src/app.js"></script>
 </body>
 
 </html>

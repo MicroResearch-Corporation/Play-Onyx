@@ -1,0 +1,62 @@
+{
+  "name": "Play Onyx",
+  "short_name": "Play Onyx",
+  "lang": "en",
+  "orientation": "any",
+  "author": "M Ramzan Ch",
+  "publisher": "MicroResearch Corporation®",
+  "description": "A Web Media Player Which You need for your daily tasks",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#d0bcff",
+  "background_color": "#0f1014",
+    "protocol_handlers": [
+    {
+      "protocol": "mailto",
+      "url": "/newEmail?to=%s"
+    }
+  ],
+    "display_override": [
+    "window-controls-overlay"
+  ],
+    "shortcuts": [
+    {
+      "name": "Visit Us",
+      "short_name": "We",
+      "description": "Reach Us For More...",
+      "url": "./mrc/",
+      "icons": [
+        {
+          "src": "./src/mrc.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "./src/logo.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "./src/logo.png",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "http://res.cloudinary.com/dpu5ywrox/image/upload/v1768760068/tavazlv3d1rlywnmpy3o.png",
+      "type": "image/png",
+      "description": "Home Screen"
+    },
+    {
+      "src": "http://res.cloudinary.com/dpu5ywrox/image/upload/v1768760068/tavazlv3d1rlywnmpy3o.png",
+      "type": "image/png",
+      "description": "Shot 2"
+    }
+  ]
+}
