@@ -118,8 +118,6 @@
             z-index: 50
         }
 
-
-
         .nav-fab {
             width: 56px;
             height: 56px;
@@ -183,7 +181,6 @@
             position: relative;
             background: var(--md-sys-color-background);
             overflow: hidden;
-            border-radius: 28px;
             margin: 12px 12px 0 12px
         }
 
@@ -204,10 +201,29 @@
         }
 
         #view-player {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background: #000;
             justify-content: center;
             align-items: center
         }
+
+        .bgfixname {
+            position: absolute;
+            white-space: nowrap;
+            color: var(--accent);
+            font-size: 2rem;
+            font-weight: 900;
+            opacity: 0;
+            left: 0;
+            top: 0;
+            z-index: 70;
+            animation: brand 102s linear infinite;
+        }
+         
+        @keyframes brand{ 0%{ scale: .5; opacity: 0;} 2.94%{ scale: 1; opacity: 1;top: 0; left: 0;} 12%{ color: var(--accent); transform: rotate3d(1, 1, 1, 0deg);} 14%{ color: var(--md-sys-color-on-primary); transform: rotate3d(1, 1, 1, 180deg);} 16%{ color: var(--accent); transform: rotate3d(1, 1, 1, 360deg);} 29.41%{ opacity: 1; scale: 1; color: var(--accent); top: calc(100% - 32px); left: 0;} 30.88%{ opacity: 0; scale: .5; color: var(--md-sys-color-on-primary); top: calc(100% - 32px); left: 0;} 42.65%{ opacity: 0; scale: .5; color: var(--md-sys-color-on-primary); top: calc(100% - 32px); left: calc(100% - 200px);} 44.12%{ opacity: 1; scale: 1; color: var(--accent); top: calc(100% - 32px); left: calc(100% - 200px);} 56%{ color: var(--accent); transform: rotate3d(1, 1, 1, 360deg);} 58%{ color: var(--md-sys-color-on-primary); transform: rotate3d(1, 1, 1, 180deg);} 60%{ color: var(--accent); transform: rotate3d(1, 1, 1, 0deg);} 70.59%{ opacity: 1; top: 0; scale: 1; left: calc(100% - 200px);} 73.53%{ scale: .5; opacity: 0; top: 0; left: calc(100% - 200px);} 100%{ opacity: 0; top: 0; left: calc(100% - 200px);}}
 
         video {
             width: 100%;
@@ -228,6 +244,18 @@
             z-index: 5
         }
 
+        /* NEW WAVEFORM / HEARTBEAT VISUALIZER */
+        #wave-vis {
+            position: absolute;
+            bottom: auto; /* Positioned above the default visualizer */
+            left: 0;
+            width: 100%;
+            height: 150px;
+            pointer-events: none;
+            z-index: 6;
+            mix-blend-mode: screen;
+        }
+
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -243,7 +271,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 10px
         }
 
         .search-bar {
@@ -403,7 +431,7 @@
             margin: auto;
             margin-bottom: 4px;
             cursor: pointer;
-            transition: .2s;
+            transition: .2s
         }
 
         .q-item:hover {
@@ -430,7 +458,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            width: 200px;
+            width: 200px
         }
 
         .player-bar {
@@ -549,6 +577,8 @@
         .track-img {
             min-width: 48px;
             min-height: 48px;
+            max-width: 48px;
+            max-height: 48px;
             border-radius: 12px;
             background: #111;
             background-size: cover;
@@ -558,45 +588,44 @@
         .title-wrap {
             width: 100%;
             overflow: hidden;
-            position: relative;
+            position: relative
         }
 
         .title-scroll {
             font-weight: 500;
             font-size: 14px;
             white-space: nowrap;
-            overflow: hidden;
+            overflow: hidden
         }
 
         .title-scroll span {
             display: inline-block;
             padding-right: 40px;
-            /* gap before repeat */
-            will-change: transform;
+            will-change: transform
         }
 
         .title-scroll.animate span {
             animation-name: title-marquee;
             animation-timing-function: linear;
             animation-iteration-count: infinite;
-            animation-play-state: running;
+            animation-play-state: running
         }
 
         .title-scroll:hover span {
-            animation-play-state: paused;
+            animation-play-state: paused
         }
 
         @keyframes title-marquee {
             0% {
-                transform: translateX(0);
+                transform: translateX(0)
             }
 
             5% {
-                transform: translateX(0);
+                transform: translateX(0)
             }
 
             100% {
-                transform: translateX(-100%);
+                transform: translateX(-100%)
             }
         }
 
@@ -659,6 +688,47 @@
 
         .modal-mask.open .modal {
             transform: scale(1)
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px
+        }
+
+        .info-body {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .srt-box {
+            background: var(--md-sys-color-background);
+            padding: 16px;
+            max-height: 100px;
+            overflow: hidden auto;
+            border-radius: 16px;
+            margin-bottom: 20px
+        }
+
+        .srt-box h3 {
+            font-size: 14px;
+            margin: 0 0 10px 0;
+            color: var(--md-sys-color-primary)
+        }
+
+        .srt-box-grid {
+            font-size: 12px;
+            display: flex;
+            gap: 6px;
+            flex-direction: column
+        }
+
+        .srt-box-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: .2px dotted var(--accent)
         }
 
         .modal h2 {
@@ -742,7 +812,7 @@
         }
 
         body.q-toggled .queue-panel {
-            opacity: 0;
+            opacity: 0
         }
 
         @media (max-width:768px) {
@@ -774,7 +844,7 @@
             }
 
             .nav-fab {
-                display: none;
+                display: none
             }
 
             .nav-item {
@@ -806,7 +876,7 @@
                 height: 90px;
                 grid-template-columns: auto 1fr auto;
                 padding: 0 16px;
-                z-index: 400;
+                z-index: 400
             }
 
             .vol-grp {
@@ -837,7 +907,7 @@
             }
 
             .q-title {
-                width: 500px;
+                width: 500px
             }
         }
 
@@ -867,12 +937,12 @@
             }
 
             .player-bar {
-                padding: 0;
+                padding: 0
             }
 
             .track-meta {
                 position: fixed;
-                top: 0;
+                top: 0
             }
 
             .track-img {
@@ -883,7 +953,7 @@
             }
 
             .ctrl-group {
-                gap: 0;
+                gap: 0
             }
 
             .btn-icon {
@@ -898,7 +968,7 @@
             }
 
             .q-title {
-                width: 290px;
+                width: 290px
             }
         }
 
@@ -1039,7 +1109,7 @@
             <span class="nav-label">Settings</span>
         </div>
         <div class="nav-item">
-            <img class="appImg" src="./src/logo.png" title="Play Onyx" alt="Play Onyx" srcset="">
+            <img class="appImg" src="logo.png" title="Play Onyx" alt="Play Onyx" srcset="">
             <span class="nav-label">Play Onyx</span>
         </div>
     </nav>
@@ -1070,8 +1140,10 @@
             </div>
         </div>
         <div id="view-player" class="view-section">
+
             <video id="video-el" playsinline crossorigin="anonymous"></video>
             <canvas id="visualizer"></canvas>
+            <canvas id="wave-vis"></canvas> <!-- NEW ZIGZAG VISUALIZER -->
 
             <div id="empty-msg" class="empty-state">
                 <svg width="80" height="80" fill="var(--md-sys-color-surface-variant)" viewBox="0 0 24 24">
@@ -1080,6 +1152,7 @@
                 </svg>
                 <span style="font-size:18px; font-weight:500">Select media to play</span>
             </div>
+            <div class="bgfixname">Play Onyx</div>
         </div>
     </main>
 
@@ -1185,18 +1258,81 @@
         </div>
     </div>
     <div class="modal-mask" id="settings-modal" onclick="app.closeModal(event)">
-        <div class="modal">
-            <h2>Settings <span onclick="app.closeModal(null, true)" style="float:right; cursor:pointer">&times;</span>
-            </h2>
-            <div class="setting-row"><span>Theme</span><button class="btn-full" style="width:auto"
-                    onclick="app.toggleTheme()">Switch</button></div>
-            <hr style="border:0; border-top:1px solid var(--md-sys-color-outline); margin:16px 0; opacity:0.3">
-            <button class="btn-full" onclick="app.clearDB()" style="margin-bottom:8px">Clear Media Database</button>
-            <button class="btn-full" onclick="settings.export()" style="margin-bottom:8px">Export Config</button>
-            <button class="btn-full" onclick="$('#import-json').click()" style="margin-bottom:8px">Import
-                Config</button>
-            <button class="btn-full" style="border-color:var(--md-sys-color-error); color:var(--md-sys-color-error)"
-                onclick="settings.reset()">Factory Reset</button>
+        <div class="modal" style="width: 480px; max-height: 90vh; overflow-y: auto;">
+            <div class="info-header">
+                <div class="info-body">
+                    <img src="logo.png" alt="logo" class="track-img">
+                    <div>
+                        <h2 style="margin: 0; font-size: 20px;">Play Onyx</h2>
+                        <span style="font-size: 12px; opacity: 0.6;">Version 1.2.0 (Stable)</span>
+                    </div>
+                </div>
+                <span onclick="app.closeModal(null, true)"
+                    style="cursor:pointer; font-size: 24px; line-height: 1;">&times;</span>
+            </div>
+
+            <div class="srt-box">
+                <h3>Keyboard Shortcuts</h3>
+                <div class="srt-box-grid">
+                    <div class="srt-box-item"><b>Space/Numpad 5</b> Play/Pause</div>
+                    <div class="srt-box-item"><b>ArrowRight/Numpad 6</b> Forward +5s</div>
+                    <div class="srt-box-item"><b>ArrowLeft/Numpad 4</b> Backward -5s</div>
+                    <div class="srt-box-item"><b>ArrowUp/Numpad 8</b> Increase Vol</div>
+                    <div class="srt-box-item"><b>ArrowDown/Numpad 2</b> Decrease Vol</div>
+                    <div class="srt-box-item"><b>Shift+I/Numpad 1</b> Media MetaData </div>
+                    <div class="srt-box-item"><b>Shift+E/Numpad 7</b> Audio Studio</div>
+                    <div class="srt-box-item"><b>Shift+V/Numpad 9</b> Video Studio</div>
+                    <div class="srt-box-item"><b>Shift+M/Numpad 3</b> PiP Mode</div>
+                    <div class="srt-box-item"><b>Shift+S/Numpad 0</b> Settings</div>
+                    <div class="srt-box-item"><b>Shift+O</b> Add Files</div>
+
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 14px; margin: 0 0 12px 0; opacity: 0.9;">Developer Information</h3>
+                <div style="font-size: 13px; line-height: 1.6; color: var(--md-sys-color-on-surface-variant);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+                        </svg>
+                        <b>MicroResearch Corporation</b>
+                    </div>
+                    <p style="margin: 0 0 12px 0; font-size: 12px;">Dedicated to building high-performance web tools for
+                        daily digital tasks. Play Onyx is an open-source initiative under the MicroResearch media suite.
+                    </p>
+
+                    <div style="display: flex; gap: 10px;">
+                        <a href="https://microresearch-corporation.github.io/" target="_blank" class="btn-full"
+                            style="text-decoration: none; text-align: center; font-size: 12px; padding: 8px;">Microresearch
+                            Corporation</a>
+                        <a href="https://github.com/microresearch-corporation/Play-Onyx" target="_blank"
+                            class="btn-full"
+                            style="text-decoration: none; text-align: center; font-size: 12px; padding: 8px;">GitHub
+                            Repository</a>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <div class="setting-row">
+                    <span>Theme</span>
+                    <button class="btn-full" style="width:auto" onclick="app.toggleTheme()">Switch Theme</button>
+                </div>
+
+                <button class="btn-full" onclick="app.clearDB()" style="margin-bottom:8px">Clear Media Database</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <button class="btn-full" onclick="settings.export()">Export JSON</button>
+                    <button class="btn-full" onclick="$('#import-json').click()">Import JSON</button>
+                </div>
+                <button class="btn-full" style="border-color:var(--md-sys-color-error); color:var(--md-sys-color-error)"
+                    onclick="settings.reset()">Factory Reset System</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 24px; opacity: 0.4; font-size: 10px; letter-spacing: 1px;">
+                &copy; 2026 MICRORESEARCH CORPORATION. ALL RIGHTS RESERVED.
+            </div>
         </div>
     </div>
     <div class="modal-mask" id="eq-modal" onclick="app.closeModal(event)">
@@ -1581,21 +1717,34 @@
                 app.toast("EQ: " + type);
             },
             loopVis: () => {
-                const cvs = $("#visualizer");
-                if (!cvs) return;
+                const cvs = $("#visualizer"); // Standard bars
+                const waveCvs = $("#wave-vis"); // NEW ZIGZAG
+
+                if (!cvs || !waveCvs) return;
+
                 const ctx = cvs.getContext("2d");
+                const waveCtx = waveCvs.getContext("2d");
+
                 const buffer = new Uint8Array(audio.analyser.frequencyBinCount);
+                const timeBuf = new Uint8Array(audio.analyser.fftSize); // Time domain for zigzag
 
                 const draw = () => {
                     requestAnimationFrame(draw);
+
+                    // Clear Canvases
+                    if (cvs.width > 0) ctx.clearRect(0, 0, cvs.width, cvs.height);
+                    waveCvs.width = waveCvs.clientWidth;
+                    waveCvs.height = waveCvs.clientHeight;
+                    waveCtx.clearRect(0, 0, waveCvs.width, waveCvs.height);
+
                     if (!player.active || !player.active.type.startsWith("audio") || player.el.paused) {
-                        if (cvs.width > 0) ctx.clearRect(0, 0, cvs.width, cvs.height);
                         return;
                     }
+
+                    // 1. Draw Standard Bars (Existing)
                     audio.analyser.getByteFrequencyData(buffer);
                     cvs.width = cvs.clientWidth;
                     cvs.height = cvs.clientHeight;
-                    ctx.clearRect(0, 0, cvs.width, cvs.height);
 
                     const barW = (cvs.width / buffer.length) * 2.5;
                     let x = 0;
@@ -1607,6 +1756,32 @@
                         ctx.fillRect(x, cvs.height - h, barW, h);
                         x += barW + 1;
                     }
+
+
+                    // 2. Draw Zigzag Waveform (New)
+                    audio.analyser.getByteTimeDomainData(timeBuf);
+                    waveCtx.lineWidth = 2;
+                    waveCtx.strokeStyle = '#d0bcff'; // ICU Cyan color
+                    waveCtx.shadowBlur = 4;
+                    waveCtx.shadowColor = '#d0bcff'; // Glow effect
+                    waveCtx.beginPath();
+
+                    const sliceW = waveCvs.width * 1.0 / audio.analyser.fftSize;
+                    let xVal = 0;
+
+                    for (let i = 0; i < audio.analyser.fftSize; i++) {
+                        const v = timeBuf[i] / 128.0; // 128 is zero-crossing
+                        const yVal = v * waveCvs.height / 2;
+
+                        if (i === 0) {
+                            waveCtx.moveTo(xVal, yVal);
+                        } else {
+                            waveCtx.lineTo(xVal, yVal);
+                        }
+
+                        xVal += sliceW;
+                    }
+                    waveCtx.stroke();
                 };
                 draw();
             }
@@ -1662,7 +1837,7 @@
                     div.className = `q-item ${player.active && player.active.id === item.id ? 'active' : ''}`;
                     div.draggable = true;
                     div.innerHTML = `
-                <div class="q-thumb" style="background-image:url(${item.thumb || './src/logo-transparent.png'})"></div>
+                <div class="q-thumb" style="background-image:url(${item.thumb || 'logo-transparent.png'})"></div>
                 <div class="q-info">
                     <div class="q-title">${item.name}</div>
                 </div>
@@ -1721,7 +1896,7 @@
                 titleEl.innerHTML = `<span>${item.name}</span>`;
                 requestAnimationFrame(() => updateScrollingTitle(titleEl));
 
-                $("#curr-thumb").style.backgroundImage = item.thumb ? `url(${item.thumb})` : 'url(./src/logo-transparent.png)';
+                $("#curr-thumb").style.backgroundImage = item.thumb ? `url(${item.thumb})` : 'url(logo-transparent.png)';
 
                 const isAudio = item.type.startsWith("audio");
                 player.el.style.opacity = isAudio ? 0 : 1;
@@ -1814,14 +1989,63 @@
 
         window.onkeydown = e => {
             if (e.target.tagName === 'INPUT') return;
-            if (e.code === "Space") { e.preventDefault(); player.toggle(); }
-            if (e.code === "ArrowRight") player.el.currentTime += 5;
-            if (e.code === "ArrowLeft") player.el.currentTime -= 5;
-            if (e.code === "ArrowUp") { e.preventDefault(); player.el.volume = Math.min(1, player.el.volume + 0.1); $("#vol-slider").value = player.el.volume; }
-            if (e.code === "ArrowDown") { e.preventDefault(); player.el.volume = Math.max(0, player.el.volume - 0.1); $("#vol-slider").value = player.el.volume; }
+            const toggleM = (id) => {
+                const el = document.getElementById(id);
+                if (el.classList.contains('open')) {
+                    app.closeModal(null, true);
+                } else {
+                    app.openModal(id);
+                }
+            };
+            const key = e.key;
+            const code = e.code;
+            const shift = e.shiftKey;
+            if (code === "Space" || key === "5") {
+                e.preventDefault();
+                player.toggle();
+            }
+            if (code === "ArrowRight" || key === "6") {
+                player.el.currentTime += 5;
+            }
+            if (code === "ArrowLeft" || key === "4") {
+                player.el.currentTime -= 5;
+            }
+            if (code === "ArrowUp" || key === "8") {
+                e.preventDefault();
+                player.el.volume = Math.min(1, player.el.volume + 0.1);
+                $("#vol-slider").value = player.el.volume;
+            }
+            if (code === "ArrowDown" || key === "2") {
+                e.preventDefault();
+                player.el.volume = Math.max(0, player.el.volume - 0.1);
+                $("#vol-slider").value = player.el.volume;
+            }
+            if ((shift && code === "KeyE") || key === "7") {
+                e.preventDefault();
+                toggleM('eq-modal');
+            }
+            if ((shift && code === "KeyV") || key === "9") {
+                e.preventDefault();
+                toggleM('vid-modal');
+            }
+            if ((shift && code === "KeyS") || key === "0") {
+                e.preventDefault();
+                toggleM('settings-modal');
+            }
+            if ((shift && code === "KeyM") || key === "3") {
+                e.preventDefault();
+                player.togglePiP();
+            }
+            if ((shift && code === "KeyI") || key === "1") {
+                e.preventDefault();
+                toggleM('meta-modal');
+            }
+            if (shift && code === "KeyO") {
+                e.preventDefault();
+                $('#file-in').click();
+            }
         };
 
-        /* UI UTILS */
         const ui = {
             setup: () => {
                 $("#seek-bar").onclick = e => {
@@ -1862,7 +2086,7 @@
                 const t = $("#curr-title");
                 t.innerHTML = "<span>No Media</span>";
                 t.classList.remove("animate");
-                $("#curr-thumb").style.backgroundImage = 'url(./src/logo-transparent.png)';
+                $("#curr-thumb").style.backgroundImage = 'url(logo-transparent.png)';
                 $("#curr-time").innerText = "00:00";
                 $("#total-time").innerText = "00:00";
                 $("#seek-fill").style.width = "0%";

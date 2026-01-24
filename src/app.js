@@ -560,16 +560,67 @@ player.el.ontimeupdate = () => {
     $("#total-time").innerText = formatTime(player.el.duration);
 };
 
+
 window.onkeydown = e => {
     if (e.target.tagName === 'INPUT') return;
-    if (e.code === "Space") { e.preventDefault(); player.toggle(); }
-    if (e.code === "ArrowRight") player.el.currentTime += 5;
-    if (e.code === "ArrowLeft") player.el.currentTime -= 5;
-    if (e.code === "ArrowUp") { e.preventDefault(); player.el.volume = Math.min(1, player.el.volume + 0.1); $("#vol-slider").value = player.el.volume; }
-    if (e.code === "ArrowDown") { e.preventDefault(); player.el.volume = Math.max(0, player.el.volume - 0.1); $("#vol-slider").value = player.el.volume; }
+    const toggleM = (id) => {
+        const el = document.getElementById(id);
+        if (el.classList.contains('open')) {
+            app.closeModal(null, true);
+        } else {
+            app.openModal(id);
+        }
+    };
+    const key = e.key;
+    const code = e.code;
+    const shift = e.shiftKey;
+    if (code === "Space" || key === "5") {
+        e.preventDefault();
+        player.toggle();
+    }
+    if (code === "ArrowRight" || key === "6") {
+        player.el.currentTime += 5;
+    }
+    if (code === "ArrowLeft" || key === "4") {
+        player.el.currentTime -= 5;
+    }
+    if (code === "ArrowUp" || key === "8") {
+        e.preventDefault();
+        player.el.volume = Math.min(1, player.el.volume + 0.1);
+        $("#vol-slider").value = player.el.volume;
+    }
+    if (code === "ArrowDown" || key === "2") {
+        e.preventDefault();
+        player.el.volume = Math.max(0, player.el.volume - 0.1);
+        $("#vol-slider").value = player.el.volume;
+    }
+    if ((shift && code === "KeyE") || key === "7") {
+        e.preventDefault();
+        toggleM('eq-modal');
+    }
+    if ((shift && code === "KeyV") || key === "9") {
+        e.preventDefault();
+        toggleM('vid-modal');
+    }
+    if ((shift && code === "KeyS") || key === "0") {
+        e.preventDefault();
+        toggleM('settings-modal');
+    }
+    if ((shift && code === "KeyM") || key === "3") {
+        e.preventDefault();
+        player.togglePiP();
+    }
+    if ((shift && code === "KeyI") || key === "1") {
+        e.preventDefault();
+        toggleM('meta-modal');
+    }
+    if (shift && code === "KeyO") {
+        e.preventDefault();
+        $('#file-in').click();
+    }
 };
 
-/* UI UTILS */
+
 const ui = {
     setup: () => {
         $("#seek-bar").onclick = e => {
@@ -708,7 +759,7 @@ function updateScrollingTitle(el) {
 
     // seconds based on text length (tweakable)
     const chars = span.innerText.length;
-    const animationtime = Math.max(6, chars * 0.35); 
+    const animationtime = Math.max(6, chars * 0.35);
 
     span.style.animationDuration = `${animationtime}s`;
     el.classList.add("animate");

@@ -139,6 +139,7 @@
                 </svg>
                 <span style="font-size:18px; font-weight:500">Select media to play</span>
             </div>
+            <div class="bgfixname">Play Onyx</div>
         </div>
     </main>
 
@@ -243,18 +244,81 @@
         </div>
     </div>
     <div class="modal-mask" id="settings-modal" onclick="app.closeModal(event)">
-        <div class="modal">
-            <h2>Settings <span onclick="app.closeModal(null, true)" style="float:right; cursor:pointer">&times;</span>
-            </h2>
-            <div class="setting-row"><span>Theme</span><button class="btn-full" style="width:auto"
-                    onclick="app.toggleTheme()">Switch</button></div>
-            <hr style="border:0; border-top:1px solid var(--md-sys-color-outline); margin:16px 0; opacity:0.3">
-            <button class="btn-full" onclick="app.clearDB()" style="margin-bottom:8px">Clear Media Database</button>
-            <button class="btn-full" onclick="settings.export()" style="margin-bottom:8px">Export Config</button>
-            <button class="btn-full" onclick="$('#import-json').click()" style="margin-bottom:8px">Import
-                Config</button>
-            <button class="btn-full" style="border-color:var(--md-sys-color-error); color:var(--md-sys-color-error)"
-                onclick="settings.reset()">Factory Reset</button>
+        <div class="modal" style="width: 480px; max-height: 90vh; overflow-y: auto;">
+            <div class="info-header">
+                <div class="info-body">
+                    <img src="./src/logo.png" alt="logo" class="track-img">
+                    <div>
+                        <h2 style="margin: 0; font-size: 20px;">Play Onyx</h2>
+                        <span style="font-size: 12px; opacity: 0.6;">Version 1.2.0 (Stable)</span>
+                    </div>
+                </div>
+                <span onclick="app.closeModal(null, true)"
+                    style="cursor:pointer; font-size: 24px; line-height: 1;">&times;</span>
+            </div>
+
+            <div class="srt-box">
+                <h3>Keyboard Shortcuts</h3>
+                <div class="srt-box-grid">
+                    <div class="srt-box-item"><b>Space/Numpad 5</b> Play/Pause</div>
+                    <div class="srt-box-item"><b>ArrowRight/Numpad 6</b> Forward +5s</div>
+                    <div class="srt-box-item"><b>ArrowLeft/Numpad 4</b> Backward -5s</div>
+                    <div class="srt-box-item"><b>ArrowUp/Numpad 8</b> Increase Vol</div>
+                    <div class="srt-box-item"><b>ArrowDown/Numpad 2</b> Decrease Vol</div>
+                    <div class="srt-box-item"><b>Shift+I/Numpad 1</b> Media MetaData </div>
+                    <div class="srt-box-item"><b>Shift+E/Numpad 7</b> Audio Studio</div>
+                    <div class="srt-box-item"><b>Shift+V/Numpad 9</b> Video Studio</div>
+                    <div class="srt-box-item"><b>Shift+M/Numpad 3</b> PiP Mode</div>
+                    <div class="srt-box-item"><b>Shift+S/Numpad 0</b> Settings</div>
+                    <div class="srt-box-item"><b>Shift+O</b> Add Files</div>
+
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 14px; margin: 0 0 12px 0; opacity: 0.9;">Developer Information</h3>
+                <div style="font-size: 13px; line-height: 1.6; color: var(--md-sys-color-on-surface-variant);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+                        </svg>
+                        <b>MicroResearch Corporation</b>
+                    </div>
+                    <p style="margin: 0 0 12px 0; font-size: 12px;">Dedicated to building high-performance web tools for
+                        daily digital tasks. Play Onyx is an open-source initiative under the MicroResearch media suite.
+                    </p>
+
+                    <div style="display: flex; gap: 10px;">
+                        <a href="https://microresearch-corporation.github.io/" target="_blank" class="btn-full"
+                            style="text-decoration: none; text-align: center; font-size: 12px; padding: 8px;">Microresearch
+                            Corporation</a>
+                        <a href="https://github.com/microresearch-corporation/Play-Onyx" target="_blank"
+                            class="btn-full"
+                            style="text-decoration: none; text-align: center; font-size: 12px; padding: 8px;">GitHub
+                            Repository</a>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <div class="setting-row">
+                    <span>Theme</span>
+                    <button class="btn-full" style="width:auto" onclick="app.toggleTheme()">Switch Theme</button>
+                </div>
+
+                <button class="btn-full" onclick="app.clearDB()" style="margin-bottom:8px">Clear Media Database</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <button class="btn-full" onclick="settings.export()">Export JSON</button>
+                    <button class="btn-full" onclick="$('#import-json').click()">Import JSON</button>
+                </div>
+                <button class="btn-full" style="border-color:var(--md-sys-color-error); color:var(--md-sys-color-error)"
+                    onclick="settings.reset()">Factory Reset System</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 24px; opacity: 0.4; font-size: 10px; letter-spacing: 1px;">
+                &copy; 2026 MICRORESEARCH CORPORATION. ALL RIGHTS RESERVED.
+            </div>
         </div>
     </div>
 
