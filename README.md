@@ -1,98 +1,107 @@
-<div align="center" id="top"> 
-  <img src="./.github/app.gif" alt="Play Onyx" />
+# Play Onyx 🎬
 
-  &#xa0;
+**Play Onyx** is a high-performance, browser-based media player designed for seamless audio and video playback. Built with a focus on privacy and speed, it allows users to manage a local media library directly within the browser without uploading files to a server.
 
-  <!-- <a href="https://playonyx.netlify.app">Demo</a> -->
-</div>
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Vanilla JS](https://img.shields.io/badge/Vanilla-JS-yellow.svg)
+![Material Design](https://img.shields.io/badge/UI-Material--3-purple.svg)
 
-<h1 align="center">Play Onyx</h1>
+**[🔗 Live Demo](https://microresearch-corporation.github.io/Play-Onyx/)**
 
-<p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8">
+---
 
-  <img alt="Github language count" src="https://img.shields.io/github/languages/count/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8">
+## ✨ Features
 
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8">
+### 📂 Media Management
+- **Local Persistence:** Uses **IndexedDB** to store your media files locally in the browser. They remain there even after a page refresh.
+- **Unified Library:** Automatically categorizes files into "Audio" and "Video" tabs.
+- **Smart Search:** Quickly find tracks or videos with the real-time search bar.
+- **Drag & Drop:** Import files by simply dragging them into the interface.
 
-  <img alt="License" src="https://img.shields.io/github/license/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8">
+### 🎧 Audio & Visuals
+- **Audio Studio:** 3-band Equalizer (Bass, Mids, Treble) with presets (Rock, Pop, Jazz, etc.).
+- **Visualizer:** Real-time frequency visualizer powered by the Web Audio API.
+- **Speed Control:** Adjust playback speed from 0.5x to 2.0x.
 
-  <!-- <img alt="Github issues" src="https://img.shields.io/github/issues/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8" /> -->
+### 📺 Video Enhancements
+- **Video Studio:** Real-time filters for Brightness, Contrast, Saturation, and Hue.
+- **Subtitles:** Support for external `.srt` and `.vtt` caption files.
+- **Picture-in-Picture (PiP):** Multitask while watching your videos.
+- **Fullscreen Mode:** Immersive playback experience.
 
-  <!-- <img alt="Github forks" src="https://img.shields.io/github/forks/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8" /> -->
+### 🛠 UI/UX
+- **Material 3 Design:** A sleek, modern interface following Google's latest design system.
+- **Responsive:** Fully optimized for Desktop, Tablet, and Mobile devices.
+- **Queue System:** Interactive "Next Up" list with drag-and-drop reordering.
+- **Theming:** Toggle between Dark and Light modes.
+- **Config Management:** Export and Import your player settings as JSON.
 
-  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/{{YOUR_GITHUB_USERNAME}}/play-onyx?color=56BEB8" /> -->
-</p>
+---
 
-<!-- Status -->
+## 🚀 Getting Started
 
-<!-- <h4 align="center"> 
-	🚧  Play Onyx 🚀 Under construction...  🚧
-</h4> 
+Since **Play Onyx** is built with Vanilla JavaScript and HTML5, it requires no installation or build process.
 
-<hr> -->
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/microresearch-corporation/Play-Onyx.git
+   ```
+2. **Open the project:**
+   Simply open `index.html` in any modern web browser (Chrome, Edge, Firefox, or Safari).
 
-<p align="center">
-  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
-  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
-  <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
-  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
-  <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
-  <a href="#memo-license">License</a> &#xa0; | &#xa0;
-  <a href="https://github.com/{{YOUR_GITHUB_USERNAME}}" target="_blank">Author</a>
-</p>
+---
 
-<br>
+## 🛠 Technical Stack
 
-## :dart: About ##
+- **Frontend:** HTML5, CSS3 (Custom Variables, Grid, Flexbox).
+- **Logic:** Vanilla JavaScript (ES6+).
+- **Storage:** 
+    - `IndexedDB` for storing large media Blobs.
+    - `LocalStorage` for user preferences and settings.
+- **APIs:** 
+    - `Web Audio API` for EQ and Visualizer.
+    - `Canvas API` for thumbnail generation and visualizer rendering.
+    - `Picture-in-Picture API`.
 
-Describe your project
+---
 
-## :sparkles: Features ##
+## 🔒 Privacy
 
-:heavy_check_mark: Feature 1;\
-:heavy_check_mark: Feature 2;\
-:heavy_check_mark: Feature 3;
+**Play Onyx** respects your privacy. 
+- No media is ever uploaded to a server.
+- All processing, storage, and playback happen locally on your machine.
+- No tracking or analytics.
 
-## :rocket: Technologies ##
+---
 
-The following tools were used in this project:
+## ⌨️ Keyboard Shortcuts
 
-- [Expo](https://expo.io/)
-- [Node.js](https://nodejs.org/en/)
-- [React](https://pt-br.reactjs.org/)
-- [React Native](https://reactnative.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
+| Key | Action |
+|-----|--------|
+| `Space` | Play / Pause |
+| `Arrow Right` | Skip forward 5s |
+| `Arrow Left` | Skip backward 5s |
+| `Arrow Up` | Increase Volume |
+| `Arrow Down` | Decrease Volume |
 
-## :white_check_mark: Requirements ##
+---
 
-Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) and [Node](https://nodejs.org/en/) installed.
+## 📄 License
 
-## :checkered_flag: Starting ##
+Distributed under the MIT License. See `LICENSE` for more information.
 
-```bash
-# Clone this project
-$ git clone https://github.com/{{YOUR_GITHUB_USERNAME}}/play-onyx
+---
 
-# Access
-$ cd play-onyx
+## 🤝 Contributing
 
-# Install dependencies
-$ yarn
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create.
 
-# Run the project
-$ yarn start
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-# The server will initialize in the <http://localhost:3000>
-```
+---
 
-## :memo: License ##
-
-This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
-
-
-Made with :heart: by <a href="https://github.com/{{YOUR_GITHUB_USERNAME}}" target="_blank">{{YOUR_NAME}}</a>
-
-&#xa0;
-
-<a href="#top">Back to top</a>
+**Developed with ❤️ by [M Ramzan Ch](https://mramzanch.blogspot.com/) at [Pro-Bandey](https://github.com/Pro-Bandey) under [MicroResearch Corporation](https://microresearch-corporation.github.io/)**
