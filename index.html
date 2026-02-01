@@ -55,7 +55,6 @@
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
             </svg>
         </div>
-
         <div class="nav-item" data-tab="playing" onclick="app.nav('playing')">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
@@ -85,8 +84,7 @@
             <span class="nav-label">Video</span>
         </div>
 
-        <div style="flex:1"></div>
-
+        <div style="flex: 1"></div>
 
         <div class="nav-item" onclick="app.openModal('settings-modal')">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -96,22 +94,28 @@
             <span class="nav-label">Settings</span>
         </div>
         <div class="nav-item">
-            <img class="appImg" src="./src/logo.png" title="Play Onyx" alt="Play Onyx" srcset="">
+            <img class="appImg" src="./src/logo.png" title="Play Onyx" alt="Play Onyx" srcset="" />
             <span class="nav-label">Play Onyx</span>
         </div>
-
-
     </nav>
 
     <main class="stage">
         <div id="view-library" class="view-section active">
             <div class="lib-header">
                 <div>
-                    <h2 style="margin:0; font-size:28px" id="lib-title">Library</h2>
-                    <span style="color:var(--md-sys-color-outline); font-size:14px"><span id="lib-count">0</span>
+                    <h2 style="margin: 0; font-size: 28px" id="lib-title">Library</h2>
+                    <span style="color: var(--md-sys-color-outline); font-size: 14px"><span id="lib-count">0</span>
                         items</span>
                 </div>
-                <input type="text" class="search-bar" id="search" placeholder="Search files...">
+                <div style="display: flex; gap: 10px; flex: 1; justify-content: flex-end">
+                    <select id="sort-select" class="search-bar" style="width: 120px; cursor: pointer"
+                        onchange="app.sortLib(this.value)">
+                        <option value="date">Newest</option>
+                        <option value="name">Name</option>
+                        <option value="size">Size</option>
+                    </select>
+                    <input type="text" class="search-bar" id="search" placeholder="Search files..." />
+                </div>
             </div>
             <div class="import-zone" id="drop-zone" onclick="$('#file-in').click()">
                 <div class="import-icon">
@@ -119,25 +123,27 @@
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                     </svg>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:center">
-                    <span style="font-weight:500">Add Media</span>
-                    <span style="font-size:12px; opacity:0.7">Drop files here or click</span>
+                <div style="display: flex; flex-direction: column; align-items: center">
+                    <span style="font-weight: 500">Add Media</span>
+                    <span style="font-size: 12px; opacity: 0.7">Drop files here or click</span>
                 </div>
             </div>
-            <div class="lib-grid" id="lib-grid">
-
+            <div style="flex: 2; overflow-y: auto">
+                <div class="lib-grid" id="lib-grid"></div>
             </div>
         </div>
         <div id="view-player" class="view-section">
             <video id="video-el" playsinline crossorigin="anonymous"></video>
             <canvas id="visualizer"></canvas>
+            <canvas id="wave-vis"></canvas>
+            <!-- NEW ZIGZAG VISUALIZER -->
 
             <div id="empty-msg" class="empty-state">
                 <svg width="80" height="80" fill="var(--md-sys-color-surface-variant)" viewBox="0 0 24 24">
                     <path
                         d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15c0-1.66 1.34-3 3-3 .35 0 .69.07 1 .18V6h5v2h-3v7.03A3.003 3.003 0 0 1 11 18c-1.66 0-3-1.34-3-3z" />
                 </svg>
-                <span style="font-size:18px; font-weight:500">Select media to play</span>
+                <span style="font-size: 18px; font-weight: 500">Select media to play</span>
             </div>
             <div class="bgfixname">Play Onyx</div>
         </div>
@@ -146,14 +152,14 @@
     <aside class="queue-panel">
         <div class="queue-header">
             <span>Next Up</span>
-            <button class="btn-icon" onclick="queue.clear()" title="Clear Queue"><svg width="20" height="20"
-                    fill="currentColor" viewBox="0 0 24 24">
+            <button class="btn-icon" onclick="queue.clear()" title="Clear Queue">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M15 16h4v2h-4zm0-8h7v2h-7zm0 4h6v2h-6zM3 18c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V8H3v10zM14 5h-3l-1-1H6L5 5H2v2h12z" />
-                </svg></button>
+                </svg>
+            </button>
         </div>
-        <div class="q-list" id="queue-cont">
-        </div>
+        <div class="q-list" id="queue-cont"></div>
     </aside>
     <div class="player-bar">
         <div class="progress-cont" id="seek-bar">
@@ -164,12 +170,16 @@
 
         <div class="track-meta">
             <div class="track-img" id="curr-thumb"></div>
-            <div style="overflow:hidden;">
+            <div style="overflow: hidden">
                 <div class="title-wrap">
-                    <div class="title-scroll" id="curr-title"><span>No Media</span></div>
+                    <div class="title-scroll" id="curr-title">
+                        <span>No Media</span>
+                    </div>
                 </div>
-                <div style="font-size:12px; color:var(--md-sys-color-outline)"><span id="curr-time">00:00</span> / <span
-                        id="total-time">00:00</span></div>
+                <div style="font-size: 12px; color: var(--md-sys-color-outline)">
+                    <span id="curr-time">00:00</span> /
+                    <span id="total-time">00:00</span>
+                </div>
             </div>
             <button class="btn-icon" title="Details" onclick="app.openModal('meta-modal')">
                 <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
@@ -180,7 +190,10 @@
         </div>
 
         <div class="ctrl-group">
-            <button class="btn-icon" id="btn-shuffle" onclick="player.shuffle = !player.shuffle; ui.renderCtrls();">
+            <button class="btn-icon" id="btn-shuffle" onclick="
+            player.shuffle = !player.shuffle;
+            ui.renderCtrls();
+          ">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
@@ -201,7 +214,10 @@
                     <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                 </svg>
             </button>
-            <button class="btn-icon" id="btn-loop" onclick="player.loop = !player.loop; ui.renderCtrls();">
+            <button class="btn-icon" id="btn-loop" onclick="
+            player.loop = !player.loop;
+            ui.renderCtrls();
+          ">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
@@ -209,34 +225,40 @@
             </button>
         </div>
 
-        <div class="ctrl-group" style="justify-content: flex-end;">
-            <button class="btn-icon" onclick="app.openModal('eq-modal')"><svg width="20" height="20" fill="currentColor"
-                    viewBox="0 0 24 24">
+        <div class="ctrl-group" style="justify-content: flex-end">
+            <button class="btn-icon" onclick="app.openModal('eq-modal')">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
-                </svg></button>
-            <button class="btn-icon" onclick="app.openModal('vid-modal')"><svg width="20" height="20"
-                    fill="currentColor" viewBox="0 0 24 24">
+                </svg>
+            </button>
+            <button class="btn-icon" onclick="app.openModal('vid-modal')">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15c0-1.66 1.34-3 3-3 .35 0 .69.07 1 .18V6h5v2h-3v7.03A3.003 3.003 0 0 1 11 18c-1.66 0-3-1.34-3-3z" />
-                </svg></button>
-            <button class="btn-icon" onclick="player.togglePiP()"><svg width="20" height="20" fill="currentColor"
-                    viewBox="0 0 24 24">
+                </svg>
+            </button>
+            <button class="btn-icon" onclick="player.togglePiP()">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M19 11h-8v6h8v-6zm4 8V4.98C23 3.88 22.1 3 21 3H3c-1.1 0-2 .88-2 1.98V19c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2zm-2 .02H3V4.97h18v14.05z" />
-                </svg></button>
-            <div style="width:80px; padding:0 8px">
-                <input type="range" id="vol-slider" min="0" max="1" step="0.05" oninput="player.volume(this.value)">
+                </svg>
+            </button>
+            <div style="width: 80px; padding: 0 8px">
+                <input type="range" id="vol-slider" min="0" max="1" step="0.05" oninput="player.volume(this.value)" />
             </div>
-            <button class="btn-icon"
-                onclick="document.fullscreenElement ? document.exitFullscreen() : document.body.requestFullscreen()">
+            <button class="btn-icon" onclick="
+            document.fullscreenElement
+              ? document.exitFullscreen()
+              : document.body.requestFullscreen()
+          ">
                 <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
                 </svg>
             </button>
 
             <button class="btn-icon" id="btn-q-toggle" onclick="ui.toggleQueue()" title="Toggle Queue"
-                style="color:var(--md-sys-color-primary)">
+                style="color: var(--md-sys-color-primary)">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
                 </svg>
@@ -244,138 +266,214 @@
         </div>
     </div>
     <div class="modal-mask" id="settings-modal" onclick="app.closeModal(event)">
-        <div class="modal" style="width: 480px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal" style="width: 480px; max-height: 90vh; overflow-y: auto">
             <div class="info-header">
                 <div class="info-body">
-                    <img src="./src/logo.png" alt="logo" class="track-img">
+                    <img src="./src/logo.png" alt="logo" class="track-img" />
                     <div>
-                        <h2 style="margin: 0; font-size: 20px;">Play Onyx</h2>
-                        <span style="font-size: 12px; opacity: 0.6;">Version 1.2.0 (Stable)</span>
+                        <h2 style="margin: 0; font-size: 20px">Play Onyx</h2>
+                        <span style="font-size: 12px; opacity: 0.6">Version 1.2.0 (Stable)</span>
                     </div>
                 </div>
                 <span onclick="app.closeModal(null, true)"
-                    style="cursor:pointer; font-size: 24px; line-height: 1;">&times;</span>
+                    style="cursor: pointer; font-size: 24px; line-height: 1">&times;</span>
             </div>
 
             <div class="srt-box">
                 <h3>Keyboard Shortcuts</h3>
                 <div class="srt-box-grid">
                     <div class="srt-box-item"><b>Space/Numpad 5</b> Play/Pause</div>
-                    <div class="srt-box-item"><b>ArrowRight/Numpad 6</b> Forward +5s</div>
-                    <div class="srt-box-item"><b>ArrowLeft/Numpad 4</b> Backward -5s</div>
+                    <div class="srt-box-item">
+                        <b>ArrowRight/Numpad 6</b> Forward +5s
+                    </div>
+                    <div class="srt-box-item">
+                        <b>ArrowLeft/Numpad 4</b> Backward -5s
+                    </div>
                     <div class="srt-box-item"><b>ArrowUp/Numpad 8</b> Increase Vol</div>
-                    <div class="srt-box-item"><b>ArrowDown/Numpad 2</b> Decrease Vol</div>
-                    <div class="srt-box-item"><b>Shift+I/Numpad 1</b> Media MetaData </div>
+                    <div class="srt-box-item">
+                        <b>ArrowDown/Numpad 2</b> Decrease Vol
+                    </div>
+                    <div class="srt-box-item">
+                        <b>Shift+I/Numpad 1</b> Media MetaData
+                    </div>
                     <div class="srt-box-item"><b>Shift+E/Numpad 7</b> Audio Studio</div>
                     <div class="srt-box-item"><b>Shift+V/Numpad 9</b> Video Studio</div>
                     <div class="srt-box-item"><b>Shift+M/Numpad 3</b> PiP Mode</div>
                     <div class="srt-box-item"><b>Shift+S/Numpad 0</b> Settings</div>
                     <div class="srt-box-item"><b>Shift+O</b> Add Files</div>
-
                 </div>
             </div>
 
-            <div style="margin-bottom: 24px;">
-                <h3 style="font-size: 14px; margin: 0 0 12px 0; opacity: 0.9;">Developer Information</h3>
-                <div style="font-size: 13px; line-height: 1.6; color: var(--md-sys-color-on-surface-variant);">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <div style="margin-bottom: 24px">
+                <h3 style="font-size: 14px; margin: 0 0 12px 0; opacity: 0.9">
+                    Developer Information
+                </h3>
+                <div style="
+              font-size: 13px;
+              line-height: 1.6;
+              color: var(--md-sys-color-on-surface-variant);
+            ">
+                    <div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+              ">
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
                         </svg>
                         <b>MicroResearch Corporation</b>
                     </div>
-                    <p style="margin: 0 0 12px 0; font-size: 12px;">Dedicated to building high-performance web tools for
-                        daily digital tasks. Play Onyx is an open-source initiative under the MicroResearch media suite.
+                    <p style="margin: 0 0 12px 0; font-size: 12px">
+                        Dedicated to building high-performance web tools for daily digital
+                        tasks. Play Onyx is an open-source initiative under the
+                        MicroResearch media suite.
                     </p>
 
-                    <div style="display: flex; gap: 10px;">
-                        <a href="https://microresearch-corporation.github.io/" target="_blank" class="btn-full"
-                            style="text-decoration: none; text-align: center; font-size: 12px; padding: 8px;">Microresearch
-                            Corporation</a>
+                    <div style="display: flex; gap: 10px">
+                        <a href="https://microresearch-corporation.github.io/" target="_blank" class="btn-full" style="
+                  text-decoration: none;
+                  text-align: center;
+                  font-size: 12px;
+                  padding: 8px;
+                ">Microresearch Corporation</a>
                         <a href="https://github.com/microresearch-corporation/Play-Onyx" target="_blank"
-                            class="btn-full"
-                            style="text-decoration: none; text-align: center; font-size: 12px; padding: 8px;">GitHub
-                            Repository</a>
+                            class="btn-full" style="
+                  text-decoration: none;
+                  text-align: center;
+                  font-size: 12px;
+                  padding: 8px;
+                ">GitHub Repository</a>
                     </div>
                 </div>
             </div>
 
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <div style="
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+          ">
                 <div class="setting-row">
                     <span>Theme</span>
-                    <button class="btn-full" style="width:auto" onclick="app.toggleTheme()">Switch Theme</button>
+                    <button class="btn-full" style="width: auto" onclick="app.toggleTheme()">
+                        Switch Theme
+                    </button>
                 </div>
 
-                <button class="btn-full" onclick="app.clearDB()" style="margin-bottom:8px">Clear Media Database</button>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                    <button class="btn-full" onclick="settings.export()">Export JSON</button>
-                    <button class="btn-full" onclick="$('#import-json').click()">Import JSON</button>
+                <button class="btn-full" onclick="app.clearDB()" style="margin-bottom: 8px">
+                    Clear Media Database
+                </button>
+                <div style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              margin-bottom: 8px;
+            ">
+                    <button class="btn-full" onclick="settings.export()">
+                        Export JSON
+                    </button>
+                    <button class="btn-full" onclick="$('#import-json').click()">
+                        Import JSON
+                    </button>
                 </div>
-                <button class="btn-full" style="border-color:var(--md-sys-color-error); color:var(--md-sys-color-error)"
-                    onclick="settings.reset()">Factory Reset System</button>
+                <button class="btn-full" style="
+              border-color: var(--md-sys-color-error);
+              color: var(--md-sys-color-error);
+            " onclick="settings.reset()">
+                    Factory Reset System
+                </button>
             </div>
 
-            <div style="text-align: center; margin-top: 24px; opacity: 0.4; font-size: 10px; letter-spacing: 1px;">
+            <div style="
+            text-align: center;
+            margin-top: 24px;
+            opacity: 0.4;
+            font-size: 10px;
+            letter-spacing: 1px;
+          ">
                 &copy; 2026 MICRORESEARCH CORPORATION. ALL RIGHTS RESERVED.
             </div>
         </div>
     </div>
-
     <div class="modal-mask" id="eq-modal" onclick="app.closeModal(event)">
         <div class="modal">
             <h2>Audio Studio</h2>
-            <div class="setting-row"><span>Bass</span><input type="range" min="-15" max="15"
-                    oninput="audio.setEq('low',this.value)" id="eq-low"></div>
-            <div class="setting-row"><span>Mids</span><input type="range" min="-15" max="15"
-                    oninput="audio.setEq('mid',this.value)" id="eq-mid"></div>
-            <div class="setting-row"><span>Treble</span><input type="range" min="-15" max="15"
-                    oninput="audio.setEq('high',this.value)" id="eq-high"></div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:16px">
+            <div class="setting-row">
+                <span>Bass</span><input type="range" min="-15" max="15" oninput="audio.setEq('low', this.value)"
+                    id="eq-low" />
+            </div>
+            <div class="setting-row">
+                <span>Mids</span><input type="range" min="-15" max="15" oninput="audio.setEq('mid', this.value)"
+                    id="eq-mid" />
+            </div>
+            <div class="setting-row">
+                <span>Treble</span><input type="range" min="-15" max="15" oninput="audio.setEq('high', this.value)"
+                    id="eq-high" />
+            </div>
+            <div style="
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+          ">
                 <button class="btn-full" onclick="audio.preset('rock')">Rock</button>
                 <button class="btn-full" onclick="audio.preset('pop')">Pop</button>
-                <button class="btn-full" onclick="audio.preset('vocal')">Vocal</button>
+                <button class="btn-full" onclick="audio.preset('vocal')">
+                    Vocal
+                </button>
                 <button class="btn-full" onclick="audio.preset('bass')">Bass+</button>
                 <button class="btn-full" onclick="audio.preset('jazz')">Jazz</button>
                 <button class="btn-full" onclick="audio.preset('flat')">Flat</button>
             </div>
-            <div class="setting-row" style="margin-top:20px"><span>Speed (x<span id="speed-val">1.0</span>)</span>
-                <input type="range" style="width:50%" min="0.5" max="2.0" step="0.1" value="1"
-                    oninput="player.setSpeed(this.value)">
+            <div class="setting-row" style="margin-top: 20px">
+                <span>Speed (x<span id="speed-val">1.0</span>)</span>
+                <input type="range" style="width: 50%" min="0.5" max="2.0" step="0.1" value="1"
+                    oninput="player.setSpeed(this.value)" />
             </div>
         </div>
     </div>
-
     <div class="modal-mask" id="vid-modal" onclick="app.closeModal(event)">
         <div class="modal">
             <h2>Video Studio</h2>
-            <div class="setting-row"><span>Brightness</span><input type="range" min="0" max="2" step="0.1" value="1"
-                    oninput="player.filter('brightness',this.value)"></div>
-            <div class="setting-row"><span>Contrast</span><input type="range" min="0" max="2" step="0.1" value="1"
-                    oninput="player.filter('contrast',this.value)"></div>
-            <div class="setting-row"><span>Saturate</span><input type="range" min="0" max="3" step="0.1" value="1"
-                    oninput="player.filter('saturate',this.value)"></div>
-            <div class="setting-row"><span>Hue</span><input type="range" min="0" max="360" step="10" value="0"
-                    oninput="player.filter('hue',this.value)"></div>
-            <button class="btn-full" onclick="$('#sub-in').click()" style="margin-top:16px">Load Subtitle
-                (.srt)</button>
+            <div class="setting-row">
+                <span>Brightness</span><input type="range" min="0" max="2" step="0.1" value="1"
+                    oninput="player.filter('brightness', this.value)" />
+            </div>
+            <div class="setting-row">
+                <span>Contrast</span><input type="range" min="0" max="2" step="0.1" value="1"
+                    oninput="player.filter('contrast', this.value)" />
+            </div>
+            <div class="setting-row">
+                <span>Saturate</span><input type="range" min="0" max="3" step="0.1" value="1"
+                    oninput="player.filter('saturate', this.value)" />
+            </div>
+            <div class="setting-row">
+                <span>Hue</span><input type="range" min="0" max="360" step="10" value="0"
+                    oninput="player.filter('hue', this.value)" />
+            </div>
+            <button class="btn-full" onclick="$('#sub-in').click()" style="margin-top: 16px">
+                Load Subtitle (.srt)
+            </button>
         </div>
     </div>
-
     <div class="modal-mask" id="meta-modal" onclick="app.closeModal(event)">
         <div class="modal">
-            <h2>Metadata <span onclick="app.closeModal(null, true)" style="float:right; cursor:pointer">&times;</span>
+            <h2>
+                Metadata
+                <span onclick="app.closeModal(null, true)" style="float: right; cursor: pointer">&times;</span>
             </h2>
-            <div id="meta-body" style="line-height:1.6; color:var(--md-sys-color-on-surface-variant)"></div>
+            <div id="meta-body" style="
+            line-height: 1.6;
+            color: var(--md-sys-color-on-surface-variant);
+          "></div>
         </div>
     </div>
-
     <div id="toast" class="toast">Action</div>
     <div id="ctx-menu"></div>
-    <input type="file" id="file-in" multiple accept="video/*,audio/*" style="display:none"
-        onchange="app.handleFiles(this)">
-    <input type="file" id="import-json" accept=".json" style="display:none" onchange="settings.import(this)">
-    <input type="file" id="sub-in" accept=".vtt,.srt" style="display:none" onchange="player.loadSub(this)">
+    <input type="file" id="file-in" multiple accept="video/*,audio/*" style="display: none"
+        onchange="app.handleFiles(this)" />
+    <input type="file" id="import-json" accept=".json" style="display: none" onchange="settings.import(this)" />
+    <input type="file" id="sub-in" accept=".vtt,.srt" style="display: none" onchange="player.loadSub(this)" />
 
     <script src="./src/app.js"></script>
 </body>
